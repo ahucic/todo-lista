@@ -1,0 +1,73 @@
+﻿@model assignmentWork.Models.list
+@{
+    ViewData["Title"] = "welcome";
+    Layout = "~/Views/Shared/_Register.cshtml";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4>Unesite svoje zadatke : </h4>
+
+        <form method="post">
+            <div class="form-group">
+                <input type="text" asp-for="name" class="form-control" placeholder="Dodaj novi" />
+            </div>
+            <button type="submit" class="btn btn-primary">Dodaj</button>
+        </form>
+    </div>
+</div>
+<hr />
+
+    <table class="table table-bordered">
+        @{
+            foreach (var item in ViewBag.select)
+            {
+                <tr id="@item.id">
+                    <td><input type="checkbox" name="id"  id="id[]" value="@item.id" /></td>
+                    <td>@item.name</td>
+
+                </tr>
+
+
+            }
+        }
+    </table>
+    <button class="btn btn-danger" type="button" id="deletebtn" >Obriši</button>
+<script>
+    $(document).ready(function () {
+        $('#deletebtn').click(function () {
+            if (confirm("Jeste li sigurni da želite obrisati ?")) {
+                var id = [];
+                $(':checkbox:checked').each(function (i) {
+                    id[i] = $(this).val();
+
+                });
+                if (id.length === 0) {
+                    alert("Molim odaberite kućicu");
+
+                } else {
+                    $.ajax({
+                        method:'POST',
+                        url: '@Url.Action("delete")',
+                        data: { id: id },
+                        success: function (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                $('tr#' + id[i] + '').css('background-color', '#ccc');
+                                $('tr#' + id[i] + '').fadeOut('slow');
+                            }
+                            
+                        }
+                       
+                    })
+                }
+
+            }
+        })
+})
+</script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+
+
